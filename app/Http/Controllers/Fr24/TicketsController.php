@@ -84,7 +84,7 @@ class TicketsController extends Controller
 
         // Updating seat, let's make sure seat is available
         if($request->get('seat')) {
-            $occupiedSeat = Ticket::where('seat', (int) $request->get('seat'))
+            $occupiedSeat = Ticket::booked()->where('seat', (int) $request->get('seat'))
                                   ->where('flight_id', $ticket->flight->id)->get();
 
             // Seat occupied

@@ -31,6 +31,9 @@ class FlightTicketsController extends Controller
     public function store(Flight $flight, Request $request)
     {
 
+        // Define accepted POST params
+        $acceptedParameters = ['passport_ref_no', 'seat'];
+
         // Make sure current user owns this flight
         if(!$flight->isOwnedByCurrentUser())
             return response()->json([
@@ -62,6 +65,7 @@ class FlightTicketsController extends Controller
                     ->diff($bookedFlightSeats->toArray())
                     ->flatten()
                     ->random();
+        
         } else {
             
             // Desired seat, make sure the seat isn't booked
@@ -77,8 +81,9 @@ class FlightTicketsController extends Controller
 
         }
 
+        // Store ticket
         $ticket = Ticket::create(
-            array_merge($request->all(), [
+            array_merge($request->only($acceptedParameters), [
                 'flight_id' => $flight->id,
                 'seat' => $seat
             ])

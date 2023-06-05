@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Fr24;
 
 use App\Models\Fr24\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 
 class TicketsController extends Controller
@@ -68,6 +69,13 @@ class TicketsController extends Controller
                 'message' => 'You are not authorized to handle this resource'
             ], 401);
 
+        // Ticket is cancelled
+        if($ticket->cancelled_at)
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This ticket has been cancelled'
+            ], 422);
+
         // Validate request
         $request->validate([
             'passport_ref_no' => 'min:8|max:60|alpha_num',
@@ -104,8 +112,24 @@ class TicketsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        // Fetch ticket with associated flight
+        $ticket = Ticket::with('flight')->findOrFail($id);
+
+        // Make sure current user owns this flight
+        if(!$ticket->flight->isOwnedByCurrentUser())
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to handle this resource'
+            ], 401);
+
+        $ticket->cancelled_at = Carbon::now()->toDateTimeString();
+        $ticket->save();
+
+        return response()->json([
+            'status' => 'success',
+            'ticket' => $ticket
+        ], 201);
     }
 }

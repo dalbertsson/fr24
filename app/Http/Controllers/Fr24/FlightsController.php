@@ -22,6 +22,11 @@ class FlightsController extends Controller
      */
     public function store(Request $request)
     {
+
+        // List of allowed POST params
+        $acceptedParameters = ['origin', 'destination', 'departure_time', 'arrival_time', 'available_seats'];
+
+        // Validate request
         $request->validate([
             'origin' => 'required|uppercase|min:3|max:3',
             'destination' => 'required|uppercase|min:3|max:3',
@@ -30,15 +35,16 @@ class FlightsController extends Controller
             'available_seats' => 'required|integer|min:1|max:32'
         ]);
 
+        // Store flight
         try {
             $flight = Flight::create(
-                array_merge($request->all(), [
+                array_merge($request->only($acceptedParameters), [
                     'user_id' => auth()->user()->id
                 ])
             );
         } catch(\Exception $e) {
 
-            // Note. In a "real" production app this would most 
+            // Note. In a "real" production app this should most 
             // likely be handled globally instead, along with some 
             // sort of notification to sysadmins.
 
@@ -48,6 +54,7 @@ class FlightsController extends Controller
             ], 422);
         }
 
+        // Return response
         return response()->json([
             'status' => 'success',
             'flight' => new FlightResource($flight)

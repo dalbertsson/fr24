@@ -40,6 +40,10 @@ All payloads to the API should be posted as JSON-content in the Body
 | departure_time  | Datetime of arrival, UTC - **Required**, **Format: YYYY-MM-DD HH:ii:ss**               |
 | available_seats | Amount of seats available - **Required**, **Integer**, **Range: 1-32**                 |
 
+### View flights
+
+`GET` /flights
+
 ### View tickets for a flight
 
 `GET` /flights/{flight_id}/tickets

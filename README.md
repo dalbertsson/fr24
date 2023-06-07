@@ -18,7 +18,7 @@ Finally I did a few tweaks to the seating, so that when you create a ticket you 
 -   Run "php artisan key:generate"
 -   Run "php artisan migrate --seed"
 
-`NOTE` After successfully running the migration, you will have 3 "dummy" client accounts to test with. The API-tokens for these will be visible in the terminal. Use these api-tokens in the Bearer tokens in the Authorization header to access the API.
+`NOTE` After successfully running the migration, you will have 3 "dummy" client accounts to test with. The API-tokens for these will be visible in the terminal. Use these api-tokens as Bearer tokens in the Authorization header to access the API.
 
 Then simply run `php artisan serve` to start up the app.
 

@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::resource('/flights', FlightsController::class)->except(['create', 'edit']);
+
     Route::resource('/flights.tickets', FlightTicketsController::class)->except(['create', 'edit']);
 
     Route::resource('/tickets', TicketsController::class)->except(['create', 'edit', 'store']);

@@ -6,9 +6,15 @@ use App\Models\Fr24\Flight;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Fr24\FlightResource;
+use App\Http\Middleware\Fr24\EnsureUserOwnsFlight;
 
 class FlightsController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware(EnsureUserOwnsFlight::class, ['only' => ['show']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -65,17 +71,8 @@ class FlightsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(Flight $flight)
     {
-
-        $flight = Flight::findOrFail($id);
-        
-        if(!$flight->isOwnedByCurrentUser())
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to view this resource'
-            ], 401);
-
         return new FlightResource($flight);
     }
 }

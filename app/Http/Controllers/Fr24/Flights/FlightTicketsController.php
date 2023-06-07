@@ -7,21 +7,20 @@ use App\Models\Fr24\Ticket;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Fr24\TicketResource;
+use App\Http\Middleware\Fr24\EnsureUserOwnsFlight;
 
 class FlightTicketsController extends Controller
 {
+    
+    public function __construct() {
+        $this->middleware(EnsureUserOwnsFlight::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Flight $flight)
     {
-
-        if(!$flight->isOwnedByCurrentUser())
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to view this resource'
-            ], 401);
-
         return TicketResource::collection($flight->tickets);
     }
 
@@ -33,13 +32,6 @@ class FlightTicketsController extends Controller
 
         // Define accepted POST params
         $acceptedParameters = ['passport_ref_no', 'seat'];
-
-        // Make sure current user owns this flight
-        if(!$flight->isOwnedByCurrentUser())
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to view this resource'
-            ], 401);
 
         // Validate request
         $request->validate([

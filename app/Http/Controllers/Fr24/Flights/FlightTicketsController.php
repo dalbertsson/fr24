@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Fr24\TicketResource;
 use App\Http\Middleware\Fr24\EnsureUserOwnsFlight;
+use App\Http\Requests\Fr24\StoreFlightTicketRequest;
 
 class FlightTicketsController extends Controller
 {
@@ -27,17 +28,11 @@ class FlightTicketsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Flight $flight, Request $request)
+    public function store(StoreFlightTicketRequest $request, Flight $flight)
     {
 
         // Define accepted POST params
         $acceptedParameters = ['passport_ref_no', 'seat'];
-
-        // Validate request
-        $request->validate([
-            'passport_ref_no' => 'required|min:8|max:60|alpha_num',
-            'seat' => 'integer|min:1|max:' . $flight->available_seats
-        ]);
 
         // Fetch booked seats
         $bookedFlightSeats = $flight->tickets()->booked()->get()->pluck('seat');

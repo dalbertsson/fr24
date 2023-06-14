@@ -13,11 +13,8 @@ class TicketsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(Ticket $ticket)
     {
-
-        // Fetch ticket with associated flight
-        $ticket = Ticket::with('flight')->findOrFail($id);
 
         // Make sure current user owns this flight
         if(!$ticket->flight->isOwnedByCurrentUser())
@@ -33,18 +30,8 @@ class TicketsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request, Ticket $ticket)
     {
-
-        // Fetch ticket with associated flight
-        $ticket = Ticket::with('flight')->findOrFail($id);
-
-        // Make sure current user owns this flight
-        if(!$ticket->flight->isOwnedByCurrentUser())
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to handle this resource'
-            ], 401);
 
         // Ticket is cancelled
         if($ticket->cancelled_at)
@@ -53,13 +40,7 @@ class TicketsController extends Controller
                 'message' => 'This ticket has been cancelled'
             ], 422);
 
-        // Validate request
-        $request->validate([
-            'passport_ref_no' => 'min:8|max:60|alpha_num',
-            'seat' => 'integer|min:1|max:' . $ticket->flight->available_seats
-        ]);
-
-        // Updating seat, let's make sure seat is available
+        // Seat update requested, let's make sure seat is available
         if($request->get('seat')) {
             $occupiedSeat = Ticket::booked()->where('seat', (int) $request->get('seat'))
                                   ->where('flight_id', $ticket->flight->id)->get();

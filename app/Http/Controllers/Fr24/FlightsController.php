@@ -6,6 +6,7 @@ use App\Models\Fr24\Flight;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Fr24\FlightResource;
+use App\Http\Requests\Fr24\StoreFlightRequest;
 use App\Http\Middleware\Fr24\EnsureUserOwnsFlight;
 
 class FlightsController extends Controller
@@ -26,20 +27,11 @@ class FlightsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreFlightRequest $request)
     {
 
         // List of allowed POST params
         $acceptedParameters = ['origin', 'destination', 'departure_time', 'arrival_time', 'available_seats'];
-
-        // Validate request
-        $request->validate([
-            'origin' => 'required|uppercase|min:3|max:3',
-            'destination' => 'required|uppercase|min:3|max:3',
-            'departure_time' => 'required|date',
-            'arrival_time' => 'required|date',
-            'available_seats' => 'required|integer|min:1|max:32'
-        ]);
 
         // Store flight
         try {

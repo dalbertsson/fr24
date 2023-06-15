@@ -85,4 +85,23 @@ class FlightsTest extends TestCase
         ]);
     }
 
+    /**
+     * Test that a user cannot view a flight he does not own.
+     */
+    public function test_a_user_cannot_view_a_flight_he_does_not_own(): void
+    {
+
+        Sanctum::actingAs(
+            User::findOrFail(2)
+        );
+
+        $response = $this->get('/api/fr24/v1/flights/1');
+        
+        $response
+        ->assertStatus(401)
+        ->assertJson([
+            'status' => 'error'
+        ]);
+    }
+
 }

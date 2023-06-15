@@ -75,3 +75,7 @@ All payloads to the API should be posted as JSON-content in the Body
 ### Cancel a ticket
 
 `DELETE` /tickets/{ticket_id}
+
+## Testing
+
+Run `php artisan test` after having seeded the database

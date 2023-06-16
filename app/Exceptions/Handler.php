@@ -6,6 +6,7 @@ use Throwable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -41,6 +42,13 @@ class Handler extends ExceptionHandler
                 'status' => 'error',
                 'message' => 'Record not found',
             ], 404);
+        }
+
+        if ($e instanceof AccessDeniedHttpException ) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to perform this request',
+            ], 403);
         }
 
         return parent::render($request, $e);

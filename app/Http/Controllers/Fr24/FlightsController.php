@@ -30,13 +30,10 @@ class FlightsController extends Controller
     public function store(StoreFlightRequest $request)
     {
 
-        // List of allowed POST params
-        $acceptedParameters = ['origin', 'destination', 'departure_time', 'arrival_time', 'available_seats'];
-
         // Store flight
         try {
             $flight = Flight::create(
-                array_merge($request->only($acceptedParameters), [
+                array_merge($request->validated(), [
                     'user_id' => auth()->user()->id
                 ])
             );

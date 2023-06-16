@@ -6,6 +6,7 @@ use App\Models\Fr24\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Fr24\UpdateTicketRequest;
 
 class TicketsController extends Controller
 {
@@ -30,7 +31,7 @@ class TicketsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, Ticket $ticket)
     {
 
         // Ticket is cancelled
@@ -55,10 +56,9 @@ class TicketsController extends Controller
         }
 
         // Update ticket
-        $ticket->fill($request->only([
-            'passport_ref_no',
-            'seat'
-        ]))->save();
+        $ticket->fill(
+            $request->validated()
+        )->save();
 
         return response()->json([
             'status' => 'success',
